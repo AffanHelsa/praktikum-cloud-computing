@@ -1,7 +1,7 @@
 pipeline {
   agent any
   environment {
-    IMAGE_NAME = 'affanhelsa/simple-app'
+    IMAGE_NAME = 'affanhelsa/simple-app' 
     REGISTRY_CREDENTIALS = 'dockerhub-credentials'
   }
   stages {
@@ -21,4 +21,5 @@ pipeline {
       }
     }
   }
+  post { always { echo 'Selesai build' } }
 }
