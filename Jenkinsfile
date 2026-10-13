@@ -6,7 +6,6 @@ pipeline {
   }
   stages {
     stage('Checkout') { steps { checkout scm } }
-    stage('Build') { steps { bat 'echo "Build di Windows"' } }
     stage('Build Docker Image') {
       steps { bat "docker build -t %IMAGE_NAME%:%BUILD_NUMBER% ." }
     }
