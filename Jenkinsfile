@@ -17,7 +17,7 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: "${REGISTRY_CREDENTIALS}",
+                        credentialsId: 'dockerhub-credentials',
                         usernameVariable: 'DOCKERHUB_USER',
                         passwordVariable: 'DOCKERHUB_TOKEN'
                     )
@@ -41,11 +41,12 @@ pipeline {
         }
     }
 
-   post {
+    post {
         always {
             bat '''
-                docker rmi %IMAGE_NAME%:%BUILD_NUMBER% %IMAGE_NAME%:latest || exit 0
+                docker rmi -f %IMAGE_NAME%:%BUILD_NUMBER% %IMAGE_NAME%:latest || exit 0
             '''
             echo 'Pipeline selesai dijalankan.'
         }
     }
+}
