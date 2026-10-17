@@ -7,12 +7,6 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t %IMAGE_NAME%:%BUILD_NUMBER% .'
@@ -23,14 +17,14 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
+                        credentialsId: "${REGISTRY_CREDENTIALS}",
                         usernameVariable: 'DOCKERHUB_USER',
                         passwordVariable: 'DOCKERHUB_TOKEN'
                     )
                 ]) {
                     bat '''
                         @echo off
-                        echo %DOCKERHUB_TOKEN% | docker login -u %DOCKERHUB_USER% --password-stdin
+                        docker login -u %DOCKERHUB_USER% -p %DOCKERHUB_TOKEN%
                         if errorlevel 1 exit /b 1
 
                         docker push %IMAGE_NAME%:%BUILD_NUMBER%
@@ -49,6 +43,10 @@ pipeline {
 
     post {
         always {
+            // Memberihkan image lokal agar disk server Jenkins tidak penuh
+            bat '''
+                docker rmi %IMAGE_NAME%:%BUILD_NUMBER% %IMAGE_NAME%:latest /f
+            '''
             echo 'Pipeline selesai dijalankan.'
         }
     }
