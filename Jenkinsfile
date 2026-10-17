@@ -41,13 +41,11 @@ pipeline {
         }
     }
 
-    post {
+   post {
         always {
-            // Memberihkan image lokal agar disk server Jenkins tidak penuh
             bat '''
-                docker rmi %IMAGE_NAME%:%BUILD_NUMBER% %IMAGE_NAME%:latest /f
+                docker rmi %IMAGE_NAME%:%BUILD_NUMBER% %IMAGE_NAME%:latest || exit 0
             '''
             echo 'Pipeline selesai dijalankan.'
         }
     }
-}
